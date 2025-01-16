@@ -41,7 +41,3 @@ jobs:
             
             # 清理临时目录
             rm -rf $TEMP_DIR
-            
-            # 设置正确的权限
-            sudo chown -R nginx:nginx /home/nginx/static/official-portal
-            sudo chmod -R 755 /home/nginx/static/official-portal 
