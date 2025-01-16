@@ -1,0 +1,47 @@
+name: Deploy to Static Server
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  SSH_HOST: '118.195.254.54'
+  SSH_USERNAME: 'ubuntu'
+  SSH_KEY: 'Abcd@1234'
+
+jobs:
+  sync-files:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'  # 只在 master 分支推送时执行
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync files to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USERNAME }}
+          password: ${{ env.SSH_KEY }}
+          script: |
+            # 确保目标目录存在
+            sudo mkdir -p /home/nginx/static/official-portal
+            
+            # 创建临时目录
+            TEMP_DIR=$(mktemp -d)
+            
+            # 将文件复制到临时目录
+            cp -r $GITHUB_WORKSPACE/* $TEMP_DIR/
+            
+            # 原子性地替换目录
+            sudo mv $TEMP_DIR/* /home/nginx/static/official-portal/
+            
+            # 清理临时目录
+            rm -rf $TEMP_DIR
+            
+            # 设置正确的权限
+            sudo chown -R nginx:nginx /home/nginx/static/official-portal
+            sudo chmod -R 755 /home/nginx/static/official-portal 
