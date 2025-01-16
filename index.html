@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>媒介生存指南</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .background {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                        url('https://user-assets.sxlcdn.com/images/1115355/FqXWpBdH3O-NvdPi9D0w6-sTwpAm.png?imageMogr2/strip/auto-orient/thumbnail/2000x1500%3E/quality/90!/format/png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: clamp(10px, 2vw, 20px) clamp(20px, 5vw, 50px);
+            width: 100%;
+        }
+
+        .logo {
+            height: clamp(35px, 5vw, 60px);
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: clamp(15px, 3vw, 30px);
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .awards {
+            display: flex;
+            justify-content: center;
+            padding: 0 5%;
+            margin-top: 0;
+            width: 100%;
+        }
+
+        .awards img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .award-item {
+            text-align: center;
+        }
+
+        .award-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .main-content {
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+            z-index: 1;
+            margin-top: 10px;
+        }
+
+        .title {
+            font-size: clamp(36px, 6vw, 64px);
+            margin-bottom: clamp(10px, 2vw, 20px);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: clamp(16px, 2.5vw, 20px);
+            margin-bottom: clamp(20px, 4vw, 30px);
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: clamp(10px, 2vw, 15px) clamp(20px, 4vw, 30px);
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            text-decoration: none;
+            font-size: clamp(14px, 2vw, 16px);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: white;
+            color: black;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            pointer-events: auto;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev-btn {
+            left: 20px;
+        }
+
+        .next-btn {
+            right: 20px;
+        }
+
+        .nav-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .page-container {
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .background {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+                        url('https://user-assets.sxlcdn.com/images/1115355/FqXWpBdH3O-NvdPi9D0w6-sTwpAm.png?imageMogr2/strip/auto-orient/thumbnail/2000x1500%3E/quality/90!/format/png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            min-height: 90vh;
+            background: #0a0a0a;
+            overflow: hidden;
+            padding: 2rem 0;
+            margin-top: clamp(20px, vw, 35px);
+        }
+
+        .slider {
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-content {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            max-width: 800px;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin: 0.5rem 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            color: #888;
+            margin: 1rem 0;
+        }
+
+        .info-box {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.0);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .warning {
+            color: #9a5e04;
+            margin-bottom: 1rem;
+        }
+
+        .solution {
+            color: #f69d2f;
+        }
+
+        .navigation-dots {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Avant-garde additions */
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0,0,0,0.8), transparent);
+            z-index: -1;
+        }
+
+        .slide-content {
+            position: relative;
+        }
+
+        /* Media queries for different screen sizes */
+        @media screen and (max-width: 768px) {
+            .main-content {
+                padding: 2rem 1rem 3rem;
+            }
+            
+            .slider-container {
+                min-height: 80vh;
+                margin-top: clamp(15px, 3vw, 25px);
+            }
+
+            .awards {
+                margin-top: 15px;
+                margin-bottom: 5px;
+            }
+
+            .title {
+                font-size: 48px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .logo {
+                height: 50px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .slider-container {
+                min-height: 70vh;
+            }
+
+            .logo {
+                height: 40px;
+            }
+            
+            .navbar {
+                padding: 10px 20px;
+            }
+        }
+
+        .cta-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: clamp(40px, 8vw, 80px);
+        }
+
+        .qr-popup {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            width: 200px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .qr-popup::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent;
+        }
+
+        .qr-code {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
+            max-width: 170px;
+            margin: 0 auto 10px;
+        }
+
+        .qr-text {
+            color: #000;
+            font-size: 14px;
+            text-align: center;
+            margin: 0;
+        }
+
+        /* Desktop hover effect - simplified and more direct */
+        @media screen and (min-width: 769px) {
+            .cta-container:hover .qr-popup {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Mobile click effect */
+        @media screen and (max-width: 768px) {
+            .qr-popup {
+                display: none;
+            }
+            
+            .qr-popup.active {
+                display: block;
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        /* Add debug outline to check positioning */
+        .qr-popup * {
+            box-sizing: border-box;
+        }
+
+        /* Mobile-only adjustments */
+        @media screen and (max-width: 768px) {
+            .cta-container {
+                margin-bottom: 60px; /* Increased space after CTA button */
+            }
+            
+            .slider-container {
+                margin-top: 40px; /* Added space before slider */
+                padding-top: 30px; /* Additional top padding */
+            }
+            
+            /* Ensure proper spacing for very small devices */
+            @media screen and (max-width: 380px) {
+                .cta-container {
+                    margin-bottom: 50px;
+                }
+                
+                .slider-container {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                }
+            }
+        }
+
+        /* Mobile-only adjustments */
+        @media screen and (max-width: 768px) {
+            .subtitle {
+                margin-top: 30px; /* Added space above subtitle */
+                margin-bottom: 50px; /* Increased space below subtitle */
+                padding: 0 20px; /* Added horizontal padding for better text wrapping */
+            }
+            
+            /* Additional adjustments for very small devices */
+            @media screen and (max-width: 380px) {
+                .subtitle {
+                    margin-top: 25px;
+                    margin-bottom: 40px;
+                    padding: 0 15px;
+                }
+            }
+        }
+
+        /* Mobile-only adjustments */
+        @media screen and (max-width: 768px) {
+            .subtitle {
+                font-size: 22px; /* Increased font size */
+                line-height: 1.8; /* Adjusted line height */
+                font-weight: 400; /* Slightly bolder */
+                letter-spacing: 0.5px; /* Better readability */
+            }
+            
+            .cta-button {
+                font-size: 20px; /* Larger button text */
+                padding: 15px 35px; /* Larger button size */
+                border-width: 2.5px; /* Slightly thicker border */
+            }
+            
+            /* Adjustments for very small devices */
+            @media screen and (max-width: 380px) {
+                .subtitle {
+                    font-size: 20px;
+                }
+                
+                .cta-button {
+                    font-size: 18px;
+                    padding: 12px 30px;
+                }
+            }
+        }
+
+        /* Mobile-only slider optimizations */
+        @media screen and (max-width: 768px) {
+            .slider-container {
+                min-height: 70vh; /* Adjusted height for mobile */
+                padding: 15px 0;
+            }
+
+            .slide-content {
+                padding: 15px;
+                width: 95%; /* Wider content area */
+            }
+
+            .slide-content h2 {
+                font-size: 26px; /* Larger heading */
+                line-height: 1.4;
+                margin: 8px 0;
+            }
+
+            .slide-content .quote {
+                font-size: 20px; /* Larger quote text */
+                margin: 15px 0;
+                line-height: 1.5;
+            }
+
+            .info-box {
+                margin-top: 25px;
+                padding: 20px;
+            }
+
+            .warning, .solution {
+                font-size: 18px; /* Larger warning/solution text */
+                line-height: 1.6;
+                padding: 0 5px;
+            }
+
+            /* Navigation buttons optimization */
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .prev-btn {
+                left: 10px;
+            }
+
+            .next-btn {
+                right: 10px;
+            }
+
+            /* Navigation dots optimization */
+            .navigation-dots {
+                bottom: 25px;
+            }
+
+            .dot {
+                width: 10px;
+                height: 10px;
+                margin: 0 6px;
+            }
+
+            /* Very small devices */
+            @media screen and (max-width: 380px) {
+                .slide-content h2 {
+                    font-size: 24px;
+                }
+
+                .slide-content .quote {
+                    font-size: 18px;
+                }
+
+                .warning, .solution {
+                    font-size: 16px;
+                }
+            }
+        }
+
+        /* Mobile-only slider height and spacing adjustments */
+        @media screen and (max-width: 768px) {
+            .slider-container {
+                min-height: 100vh; /* Full viewport height */
+                padding-bottom: 100px; /* Significant bottom padding */
+                margin-bottom: 40px; /* Space after the slider */
+            }
+
+            .slide {
+                min-height: 90vh; /* Almost full viewport height */
+            }
+
+            .navigation-dots {
+                bottom: 60px; /* Moved dots higher from bottom */
+            }
+
+            /* Adjustments for shorter screens */
+            @media screen and (max-height: 700px) {
+                .slider-container {
+                    min-height: 110vh; /* Even taller for shorter screens */
+                    padding-bottom: 120px;
+                }
+
+                .slide {
+                    min-height: 100vh;
+                }
+
+                .navigation-dots {
+                    bottom: 80px;
+                }
+            }
+        }
+
+        /* Mobile-only award image adjustments */
+        @media screen and (max-width: 768px) {
+            .awards {
+                padding: 0 15px; /* Reduced horizontal padding to allow larger image */
+                width: 100%;
+                margin: 20px auto;
+            }
+
+            .awards img {
+                width: 95%; /* Make image wider */
+                max-width: 500px; /* Maximum width to maintain quality */
+                height: auto;
+                margin: 0 auto; /* Center the image */
+            }
+
+            /* Additional adjustments for smaller devices */
+            @media screen and (max-width: 380px) {
+                .awards img {
+                    width: 98%; /* Even wider for smaller screens */
+                }
+            }
+        }
+
+        /* Combined section styling */
+        .target-groups-section {
+            padding: 20px 20px;
+
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .section-lead {
+            text-align: center;
+            margin-bottom: -10px;
+            padding: 20px 20px;
+        }
+
+        .section-lead p {
+            margin-top: 10px;
+            font-size: 28px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image container with larger height for desktop */
+        .group-image-container {
+            position: relative;
+            width: 66%;
+            height: 550px; /* Increased height for desktop */
+            margin: 0 auto 20px; /* Centered horizontally */
+            overflow: hidden;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+        }
+
+        .group-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .group-image.active {
+            opacity: 1;
+        }
+
+        /* Mobile optimizations */
+        @media screen and (max-width: 768px) {
+            .group-image-container {
+                height: 350px; /* Increased mobile height */
+                width: 100%;
+            }
+        }
+
+        /* Small screen adjustments */
+        @media screen and (max-width: 380px) {
+            .group-image-container {
+                height: 300px; /* Increased small screen height */
+            }
+        }
+
+        /* Tab buttons styling */
+        .group-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        /* Text content styling */
+        .group-text-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .group-text {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .group-text.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .group-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        /* Mobile optimizations */
+        @media screen and (max-width: 768px) {
+            .target-groups-section {
+                padding: 30px 15px;
+            }
+
+            .section-lead p {
+                font-size: 24px;
+                line-height: 1.8;
+            }
+
+            .group-image-container {
+                height: 300px; /* Increased from 200px */
+            }
+        }
+
+        /* Small screen adjustments */
+        @media screen and (max-width: 380px) {
+            .section-lead p {
+                font-size: 22px;
+            }
+
+            .group-image-container {
+                height: 250px; /* Increased from smaller value */
+            }
+        }
+
+        /* Additional CSS for four-button layout */
+        @media screen and (min-width: 769px) {
+            .group-tabs {
+                flex-wrap: wrap;
+                max-width: 800px;
+                margin: 0 auto 30px;
+            }
+
+            .tab-btn {
+                flex: 1 1 calc(50% - 20px);
+                min-width: 200px;
+                text-align: center;
+            }
+        }
+
+        /* Refined mobile layout for four buttons */
+        @media screen and (max-width: 768px) {
+            .group-tabs {
+                padding: 0 15px;
+                gap: 12px;
+            }
+
+            .tab-btn {
+                padding: 12px 15px;
+                font-size: 14px;
+                text-align: center;
+            }
+        }
+
+        /* Mobile optimizations with 2x2 grid layout */
+        @media screen and (max-width: 768px) {
+            .target-groups-section {
+                padding: 30px 15px;
+            }
+
+            .group-tabs {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Creates 2 columns */
+                gap: 10px;
+                padding: 0 15px;
+                margin-bottom: 25px;
+            }
+
+            .tab-btn {
+                width: 100%;
+                padding: 12px 10px;
+                font-size: 14px;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                height: 45px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Additional adjustments for very small screens */
+            @media screen and (max-width: 380px) {
+                .group-tabs {
+                    gap: 8px;
+                    padding: 0 10px;
+                }
+
+                .tab-btn {
+                    font-size: 13px;
+                    padding: 10px 8px;
+                    height: 40px;
+                }
+            }
+        }
+
+        /* Desktop layout remains the same */
+        @media screen and (min-width: 769px) {
+            .group-tabs {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                max-width: 800px;
+                margin: 0 auto 30px;
+                gap: 20px;
+            }
+
+            .tab-btn {
+                flex: 1 1 calc(50% - 20px);
+                min-width: 200px;
+            }
+        }
+
+        /* Leading section styling with visual separation */
+        .section-lead {
+            text-align: center;
+            padding: 20px 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+
+        .section-lead p {
+    font-size: 28px; /* Increased from 24px */
+    line-height: 1.6;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+@media screen and (max-width: 768px) {
+    .section-lead h2 {
+        font-size: 32px; /* Increased from 28px */
+    }
+
+    .section-lead p {
+        font-size: 24px; /* Increased from 20px */
+        line-height: 1.8;
+    }
+
+
+}
+
+media screen and (max-width: 380px) {
+    .section-lead h2 {
+        font-size: 28px; /* Increased from 24px */
+    }
+
+    .section-lead p {
+        font-size: 22px; /* Increased from 18px */
+    }
+
+
+        /* Content wrapper styling */
+        .target-groups-wrapper {
+            background: rgb(255, 252, 252,0.99);
+            border-radius: 15px;
+        }
+
+        /* Existing styles remain the same, just moved inside the wrapper */
+        .group-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 0 20px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Mobile optimizations */
+        @media screen and (max-width: 768px) {
+            .section-lead {
+                margin: 0 15px 30px;
+                padding: 30px 15px;
+            }
+
+            .target-groups-wrapper {
+                margin: 20px 15px;
+                padding: 20px 0;
+            }
+
+            .group-tabs {
+                gap: 10px;
+                padding: 0 15px;
+            }
+        }
+
+        /* Additional adjustments for very small screens */
+        @media screen and (max-width: 380px) {
+            .section-lead {
+                padding: 25px 15px;
+            }
+
+            .target-groups-wrapper {
+                margin: 15px 10px;
+                padding: 15px 0;
+            }
+        }
+
+        .qr-popup {
+            pointer-events: auto; /* Enable interactions within popup */
+        }
+        
+        .qr-code {
+            -webkit-touch-callout: default; /* Enable long press on iOS */
+            touch-action: manipulation; /* Better touch handling */
+        }
+        
+        .popup-link {
+            display: none; /* Hidden by default */
+        }
+        
+        /* iOS-specific styles will be applied via JavaScript */
+        .popup-link.show {
+            display: block;
+            margin-top: 8px;
+            color: #007AFF;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        /* Mobile adjustments */
+        @media screen and (max-width: 768px) {
+            .qr-popup {
+                width: 250px; /* Slightly wider for mobile */
+                padding: 20px;
+            }
+            
+            .popup-link {
+                padding: 8px 0;
+                margin-top: 5px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="background">
+            <nav class="navbar">
+                <img src="https://user-assets.sxlcdn.com/images/1115355/FioSybjhJqKDPBPldnkYZN5tB4lK.png?imageMogr2/strip/auto-orient/thumbnail/300x300%3E/format/png" alt="Logo" class="logo">
+                <div class="nav-links">
+                    <a href="#">首页</a>
+                    <a href="http://www.no-news-newsroom.com" target="_blank">EN</a>
+                </div>
+            </nav>
+
+            <div class="awards">
+                <img src="https://media-survival-portal-1320399454.cos.ap-beijing.myqcloud.com/award_banner.png" alt="awards" class="crop-default">
+            </div>
+
+            <div class="main-content">
+                <h1 class="title">媒介时代<br>生存指南</h1>
+                <p class="subtitle">专注媒介AI素养、服务全人群数字生存、<br>提供素养课程/指南/可执行清单/资源/工具的一站式平台</p> <br><br>
+                <div class="cta-container">
+                    <div class="qr-popup">
+                        <img src="https://media-survival-portal-1320399454.cos.ap-beijing.myqcloud.com/mp_qrcode.png" 
+                             alt="QR Code" 
+                             class="qr-code"
+                             style="-webkit-user-select: none; /* Safari */
+                                    -ms-user-select: none; /* IE 10 and IE 11 */
+                                    user-select: none; /* Standard syntax */">
+                        <p class="qr-text">打开微信<br>扫码或搜索小程序<br>'媒介生存指南'</p>
+                        <a href="http://media-test.no-news-newsroom.cn" 
+                           target="_blank" 
+                           class="popup-link ios-only">或点击这里访问网页版</a>
+                    </div>
+                    <a href="http://media-test.no-news-newsroom.cn" target="_blank" class="cta-button">立即进入</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+            </div>
+
+            <div class="slider-container">
+                <button class="nav-btn prev-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                    </svg>
+                </button>
+                <button class="nav-btn next-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                    </svg>
+                </button>
+
+                <div class="slider">
+                    <div class="slide active">
+                        <div class="slide-content">
+                            <h2>你、你的父母、小孩，</h2>
+                            <h2>每天使用媒介的时长</h2>
+                            <h2>是多少？</h2>
+                            <p class="quote">"每人3到5个小时....?</p>
+                            <p class="quote">等等 可能还要更多"</p>
+                            <div class="info-box">
+                                <p class="warning">不断分心，媒介成瘾，信息过载，被骗被诈被洗脑、无法完成个人目标:</p>
+                                <p class="solution">你需要：媒介素养，个人知识结构搭建，数字习惯调整</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide">
+                        <div class="slide-content">
+                            <h2>你的父母使用电子设备</h2>
+                            <h2>熟练么？</h2>
+                            <h2>你与他们的信息渠道</h2>
+                            <h2>相似么？</h2>
+                            <p class="quote">为家人"数字反哺"</p>
+                            <div class="info-box">
+                                <p class="warning">
+                                    反诈防骗，加强中老年人电子设备使用能力、意愿，同步并升级信息摄入渠道和质量，协调家庭的认知与情感
+                                </p>
+                                <p class="solution">
+                                    有助于老年人与时代同步，科学地获取健康与社会新信息，
+                                    利用新技术优化养老生活。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide">
+                        <div class="slide-content">
+                            <h2>你的孩子注意力</h2>
+                            <h2>容易集中么？</h2>
+                            <h2>担忧他们使用电子设备</h2>
+                            <h2>时间过长？内容复杂？</h2>
+                            
+                            <p class="quote">在新的AI、VR等科技浪潮下，你的孩子准备好了么？</p>
+                            
+                            <div class="info-box">
+                                <p class="warning">
+                                    教会孩子利用媒介，批判性地分析理解媒介内容，不被网络内容、游戏、商业广告反消费 </p>
+                                <p class="solution">
+                                    媒介素养，AI素养，运用科技工具的能力，是这个时代在识字的同时
+                                    最需要的"生存第一课" </p>
+                            </div>
+                        </div>
+                    </div>
+
+     
+                </div>
+    
+                <div class="navigation-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <div class="section-lead">
+                <p> <br>海量媒介与信息的世界中，<br>思考力与进步力本应人人平等。 <br>我们服务的人群有：</p>
+            </div>
+
+            <div class="target-groups-section">
+                <!-- Combined section with no visual separation -->
+               
+
+                <!-- Image container -->
+                <div class="group-image-container">
+                    <img src="https://media-survival-portal-1320399454.cos.ap-beijing.myqcloud.com/profile_elderly.png" alt="中老年人群体" class="group-image active" data-group="elderly">
+                    <img src="https://media-survival-portal-1320399454.cos.ap-beijing.myqcloud.com/profile_sub_parentchild.png" alt="家长" class="group-image" data-group="parents">
+                    <img src="https://media-survival-portal-1320399454.cos.ap-beijing.myqcloud.com/profile_sub_children.png" alt="青少年" class="group-image" data-group="teenagers">
+                    <img src="https://media-survival-portal-1320399454.cos.ap-beijing.myqcloud.com/profile_young_worker.png" alt="学生、职校青年、打工人" class="group-image" data-group="youth">
+                </div>
+
+                <!-- Tab buttons -->
+                <div class="group-tabs">
+                    <button class="tab-btn active" data-group="elderly">中老年人群体</button>
+                    <button class="tab-btn" data-group="parents">家长</button>
+                    <button class="tab-btn" data-group="teenagers">青少年</button>
+                    <button class="tab-btn" data-group="youth">学生、职校青年、打工人</button>
+                </div>
+                <!-- Text content -->
+                <div class="group-text-container">
+                    <div class="group-text active" data-group="elderly">
+                        <p>我们为中老年人群体提供必要的数字生存技能课程和服务，通过帮助中老年人更方便自如地使用手机、利用各类智慧生活教育医疗健康类app，筛选更新信息源，同时理智地对待各种媒介信息，科普新兴AI诈骗手法，反诈防骗，线上赋能线下生活，促进家庭沟通，改善他们的日常生活质量。</p><br><br>
+                    </div>
+                
+                    <div class="group-text" data-group="parents">
+                        <p>作为父母，如何在数字时代引导孩子健康成长？我们提供科学的媒介教育方法，帮助父母了解数字原生代的思维方式，建立良好的亲子沟通，合理管理孩子的屏幕时间，培养孩子的媒介素养和批判性思维。同时，我们也关注家长自身的媒介使用习惯，帮助打造健康的家庭媒介环境，在AI时代既能保护孩子，又能支持他们充分发展。</p><br><br>
+                    </div>
+                
+                    <div class="group-text" data-group="teenagers">
+                        <p>针对13-18岁的青少年群体，我们提供符合年龄特点的媒介素养教育，帮助他们在网络世界中建立健康的自我认知，抵御网络成瘾、网络暴力等风险，学会合理使用社交媒体，培养独立思考能力。通过生动有趣的课程和互动，引导青少年正确认识AI技术，在享受数字生活的同时，也能保持学习专注力，平衡线上线下生活，为未来发展打下良好基础。</p><br><br>
+                    </div>
+                
+                    <div class="group-text" data-group="youth">
+                        <p>当代青年人是互联网与电子媒介的原住民，而如何利用所处的信息环境，自我赋能提升，抵制各种媒体诱惑，专注学习发展，在复杂新旧媒体环境中搭建知识结构，形成独立自考的结构化思维框架，提升思维与决策能力，自主利用媒介信息时拒绝被动消费，都成为了重要的生存课题。我们跨学科融合国内外最先进的传播学、社会学、经济学、认知科学等基础概念和媒介信息素养课程，提供简体中文世界中最实用的媒介、信息、算法素养的综合课程与实用技巧。为处于各学历与各阶层的青年人提供媒介时代的思考与行动指南。</p><br><br>
+                    </div>
+                </div>
+            </div>
+
+        <div class="contact-section" style="position: relative; z-index: 2;">
+            <div style="text-align: center; padding: 50px 0; background: rgba(0, 0, 0, 0.7);">
+                <h2 style="color: white; margin-bottom: 30px;">找到我们</h2>
+                <div style="display: flex; justify-content: center; gap: 50px;">
+                    <div>
+                        <img src="https://user-assets.sxlcdn.com/images/1115355/FsqNpw-aMM46cxRDmbJDFCjhdBFi.png?imageMogr2/strip/auto-orient/thumbnail/480x960%3E/format/png" alt="微信视频号" style="width: 150px; height: 150px;">
+                        <p style="color: white; margin-top: 10px;">微信视频号</p>
+                    </div>
+                    <div>
+                        <img src="https://user-assets.sxlcdn.com/images/1115355/FtyxSkHFw2to0E9Wvc653NUiHj5u.png?imageMogr2/strip/auto-orient/thumbnail/480x960%3E/format/png" alt="抖音" style="width: 150px; height: 150px;">
+                        <p style="color: white; margin-top: 10px;">抖音</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="position: relative; z-index: 2; background-color: #1a1a1a; padding: 40px 20px; color: #666;">
+            <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between;">
+               
+                <div style="flex: 1; padding: 0 10px;">
+                    <h3 style="color: #666; margin-bottom: 20px;">投资合作</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>no-news-newsroom@outlook.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;">
+                <p style="color: #666;">你的媒介时代生存助手</p>
+                <p style="color: #666; margin-top: 10px;">
+                    <img src="https://static-assets.sxlcdn.com/images/landing-sxl/gongan-beian.png" alt="公安备案图标" style="vertical-align: middle; margin-right: 5px;">
+                    <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010902001078" style="color: #666; text-decoration: none;" target="_blank">
+                        <span>京公网安备11010902001078号</span>
+                    </a> | 
+                    <span>京ICP备2023022545号-1</span>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dots = document.querySelectorAll('.dot');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        let currentSlide = 0;
+        
+        // Function to update active slide
+        const updateSlide = (index) => {
+            console.log('Updating to slide:', index); // Debug log
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Add active class to current slide and dot
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            
+            currentSlide = index;
+        };
+        
+        // Previous button click
+        prevBtn.addEventListener('click', () => {
+            console.log('Previous clicked, current slide:', currentSlide); // Debug log
+            let index = currentSlide - 1;
+            if (index < 0) index = slides.length - 1;
+            updateSlide(index);
+        });
+        
+        // Next button click
+        nextBtn.addEventListener('click', () => {
+            console.log('Next clicked, current slide:', currentSlide); // Debug log
+            let index = currentSlide + 1;
+            if (index >= slides.length) index = 0;
+            updateSlide(index);
+        });
+        
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                console.log('Dot clicked:', index); // Debug log
+                updateSlide(index);
+            });
+        });
+
+        // QR Code popup for mobile
+        const ctaButton = document.querySelector('.cta-button');
+        const qrPopup = document.querySelector('.qr-popup');
+        const qrImage = qrPopup.querySelector('.qr-code');
+        
+        if (window.innerWidth <= 768) {
+            ctaButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                qrPopup.classList.toggle('active');
+            });
+
+            // Close popup when clicking outside, but not when interacting with QR code
+            document.addEventListener('click', (e) => {
+                if (!ctaButton.contains(e.target) && 
+                    !qrPopup.contains(e.target)) {
+                    qrPopup.classList.remove('active');
+                }
+            });
+
+            // Prevent popup from closing when interacting with QR code
+            qrImage.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        const groupCards = document.querySelectorAll('.group-card');
+        
+        groupCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // Toggle active state of clicked card
+                card.classList.toggle('active');
+                
+                // Optional: Close other cards when one is opened
+                groupCards.forEach(otherCard => {
+                    if (otherCard !== card) {
+                        otherCard.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        const cards = document.querySelectorAll('.target-group-card');
+        
+        cards.forEach(card => {
+            const expandButton = card.querySelector('.expand-button');
+            
+            expandButton.addEventListener('click', () => {
+                // Close all other cards
+                cards.forEach(otherCard => {
+                    if (otherCard !== card) {
+                        otherCard.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current card
+                card.classList.toggle('active');
+            });
+        });
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and content
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.group-image').forEach(img => img.classList.remove('active'));
+                document.querySelectorAll('.group-text').forEach(text => text.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                const groupId = button.dataset.group;
+                document.querySelector(`.group-image[data-group="${groupId}"]`).classList.add('active');
+                document.querySelector(`.group-text[data-group="${groupId}"]`).classList.add('active');
+            });
+        });
+
+        // iOS detection
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        
+        // Show link only for iOS users
+        const popupLink = document.querySelector('.popup-link');
+        if (isIOS) {
+            popupLink.classList.add('show');
+        }
+    });
+    </script>
+</body>
+</html>
