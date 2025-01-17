@@ -63,4 +63,4 @@ jobs:
             docker pull ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
             docker stop static-portal || true
             docker rm static-portal || true
-            docker run -d --name static-portal -p 8080:80 ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
+            docker run -d --name static-portal -p 8095:80 ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
