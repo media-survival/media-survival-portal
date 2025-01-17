@@ -7,37 +7,60 @@ on:
     branches: [ "master" ]
 
 env:
-  SSH_HOST: '118.195.254.54'
+  REGISTRY: registry.cn-shanghai.aliyuncs.com
+  FRONTEND_IMAGE: image_for_lzw/ipf
+  SSH_HOST: '1.13.183.155'
   SSH_USERNAME: 'ubuntu'
   SSH_KEY: 'Abcd@1234'
+  ALIYUN_USERNAME: '宝树呐'
+  ALIYUN_PASSWORD: 'eqt539900'
 
 jobs:
-  sync-files:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'  # 只在 master 分支推送时执行
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Sync files to server
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Aliyun Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.ALIYUN_USERNAME }}
+          password: ${{ env.ALIYUN_PASSWORD }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ env.SSH_HOST }}
           username: ${{ env.SSH_USERNAME }}
           password: ${{ env.SSH_KEY }}
           script: |
-            # 确保目标目录存在
-            sudo mkdir -p /home/nginx/static/official-portal
-            
-            # 创建临时目录
-            TEMP_DIR=$(mktemp -d)
-            
-            # 将文件复制到临时目录
-            cp -r $GITHUB_WORKSPACE/* $TEMP_DIR/
-            
-            # 原子性地替换目录
-            sudo mv $TEMP_DIR/* /home/nginx/static/official-portal/
-            
-            # 清理临时目录
-            rm -rf $TEMP_DIR
+            docker pull ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
+            docker stop static-portal || true
+            docker rm static-portal || true
+            docker run -d --name static-portal -p 8080:80 ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
