@@ -9,11 +9,11 @@ on:
 env:
   REGISTRY: registry.cn-shanghai.aliyuncs.com
   FRONTEND_IMAGE: image_for_lzw/ipportal
-  SSH_HOST: '1.13.183.155'
-  SSH_USERNAME: 'ubuntu'
-  SSH_KEY: 'Abcd@1234'
-  ALIYUN_USERNAME: '宝树呐'
-  ALIYUN_PASSWORD: 'eqt539900'
+  SSH_HOST: ${{ secrets.SSH_HOST }}
+  SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+  SSH_KEY: ${{ secrets.SSH_KEY }}
+  ALIYUN_USERNAME: ${{ secrets.ALIYUN_USERNAME }}
+  ALIYUN_PASSWORD: ${{ secrets.ALIYUN_PASSWORD }}
 
 jobs:
   build-and-deploy:
