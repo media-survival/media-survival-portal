@@ -49,14 +49,14 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Deploy to new server
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.NEW_SSH_HOST }}
-          username: ${{ secrets.NEW_SSH_USERNAME }}
-          password: ${{ secrets.NEW_SSH_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_KEY }}
           script: |
             docker pull ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
-            docker stop new-static-portal || true
-            docker rm new-static-portal || true
-            docker run -d --name new-static-portal -p 8096:80 ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
+            docker stop static-portal || true
+            docker rm static-portal || true
+            docker run -d --name static-portal -p 8095:80 ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE }}:latest
