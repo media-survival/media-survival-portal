@@ -1,0 +1,58 @@
+name: Find 00-web.conf
+
+on:
+  workflow_dispatch:
+
+jobs:
+  find-config:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Find and show the original 00-web.conf
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "=== SEARCHING FOR 00-web.conf ==="
+            
+            echo "1. Check current nginx conf.d directory"
+            docker exec nginx ls -la /etc/nginx/conf.d/ 2>/dev/null || echo "Cannot access nginx conf.d"
+            
+            echo -e "\n2. Search for 00-web.conf in nginx container"
+            docker exec nginx find /etc -name "*00-web*" -type f 2>/dev/null | head -10
+            docker exec nginx find /etc -name "*web.conf*" -type f 2>/dev/null | head -10
+            
+            echo -e "\n3. Check nginx backup directories"
+            docker exec nginx ls -la /etc/nginx/backup/ 2>/dev/null || echo "No /etc/nginx/backup"
+            
+            echo -e "\n4. Search ALL nginx backup locations"
+            docker exec nginx find /etc/nginx -name "*00-web*" 2>/dev/null
+            docker exec nginx find /etc/nginx -name "*web.conf*" 2>/dev/null
+            
+            echo -e "\n5. Check host system backup locations"
+            find /home/nginx -name "*00-web*" 2>/dev/null || echo "Not found in /home/nginx"
+            find /etc/nginx -name "*00-web*" 2>/dev/null || echo "Not found in /etc/nginx"
+            find /var/backups -name "*00-web*" 2>/dev/null || echo "Not found in /var/backups"
+            
+            echo -e "\n6. Show ANY backup config files that exist"
+            docker exec nginx find /etc/nginx/backup -name "*.conf" 2>/dev/null | head -20
+            
+            echo -e "\n7. If found, show the content"
+            for backup_dir in $(docker exec nginx ls /etc/nginx/backup 2>/dev/null); do
+                echo "=== Checking backup: $backup_dir ==="
+                if docker exec nginx test -f "/etc/nginx/backup/$backup_dir/00-web.conf"; then
+                    echo "FOUND 00-web.conf in $backup_dir!"
+                    docker exec nginx cat "/etc/nginx/backup/$backup_dir/00-web.conf"
+                    echo "================================"
+                fi
+                
+                # Also check for any web.conf files
+                docker exec nginx ls -la "/etc/nginx/backup/$backup_dir/" 2>/dev/null | grep -i web
+            done
+            
+            echo -e "\n8. Search for ANY config that mentions subdomains"
+            docker exec nginx grep -r "app.no-news-newsroom.cn" /etc/nginx/backup/ 2>/dev/null || echo "No app subdomain found"
+            docker exec nginx grep -r "media-test.no-news-newsroom.cn" /etc/nginx/backup/ 2>/dev/null || echo "No media-test subdomain found" 
+            docker exec nginx grep -r "management.no-news-newsroom.cn" /etc/nginx/backup/ 2>/dev/null || echo "No management subdomain found"
