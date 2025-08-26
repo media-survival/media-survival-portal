@@ -1,0 +1,66 @@
+name: Investigate Original Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Investigate what was the ORIGINAL working setup
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "=== INVESTIGATING ORIGINAL DEPLOYMENT ==="
+            
+            echo "1. What containers were running originally?"
+            docker ps -a --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}\t{{.Image}}"
+            
+            echo -e "\n2. Look at the ORIGINAL 00-web.conf from backup"
+            echo "Searching all backup locations for the REAL original config..."
+            
+            # Check multiple backup locations
+            if docker exec nginx test -f /etc/nginx/backup/conf.d.20250825144105/00-web.conf; then
+                echo "=== ORIGINAL 00-web.conf ==="
+                docker exec nginx cat /etc/nginx/backup/conf.d.20250825144105/00-web.conf
+            fi
+            
+            if docker exec nginx test -f /etc/nginx/backup/conf.d.20250825143102/00-web.conf; then
+                echo "=== BACKUP 00-web.conf ==="
+                docker exec nginx cat /etc/nginx/backup/conf.d.20250825143102/00-web.conf
+            fi
+            
+            echo -e "\n3. What was the original docker-build workflow doing?"
+            echo "The original workflow creates a container on port 8095"
+            echo "But what was nginx doing with that container?"
+            
+            echo -e "\n4. Check if there was NO container on 8095 originally"
+            echo "Maybe the original setup was:"
+            echo "- Main domain served DIRECTLY from nginx html"
+            echo "- Subdomains served from other locations"
+            echo "- NO port 8095 container at all!"
+            
+            echo -e "\n5. Check nginx html directory contents"
+            docker exec nginx ls -la /usr/share/nginx/html/ 2>/dev/null || echo "No html directory"
+            
+            echo -e "\n6. Was there an OLD container still running?"
+            docker ps -a | grep -E "portal|static|web"
+            
+            echo -e "\n7. Check what the ORIGINAL 00-web.conf was pointing to"
+            echo "Looking for ANY reference to port 8095 or proxy_pass in backups..."
+            docker exec nginx find /etc/nginx/backup -name "*.conf" -exec grep -l "8095\|proxy_pass" {} \; 2>/dev/null || echo "No proxy_pass found in backups"
+            
+            echo -e "\n=== KEY QUESTION ==="
+            echo "Was the ORIGINAL setup:"
+            echo "A) nginx serving static files directly (no port 8095)?"
+            echo "B) nginx proxying to port 8095 (with proper subdomain configs)?"
+            echo "C) Something else entirely?"
+            
+            echo -e "\n8. Check if original used STATIC file serving"
+            echo "Maybe the original workflow just copied files to nginx html directory?"
+            echo "Let's see if there are any volume mounts:"
+            docker inspect nginx | grep -A5 -B5 "Mounts"
